@@ -4,14 +4,8 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Create a non-root user for security
-RUN adduser -D -s /bin/sh coderunner
-
-# Set proper permissions
-RUN chown -R coderunner:coderunner /app
-
-# Switch to non-root user
-USER coderunner
+# Make app directory writable by all users
+RUN chmod 777 /app
 
 # Default command - will be overridden by DockerExecutionService
 CMD ["echo", "Node.js runner ready"]

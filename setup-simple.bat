@@ -21,9 +21,9 @@ if %errorlevel% neq 0 (
 
 echo ✅ Docker is available and running
 
-REM Clean up old images
+REM Clean up old images (optional)
 echo 🧹 Cleaning up old Docker images...
-docker rmi cpp-runner:latest python-runner:latest go-runner:latest node-runner:latest >nul 2>&1
+call cleanup-docker.bat >nul 2>&1
 
 REM Build Docker images
 echo 📦 Building Docker images...
@@ -36,6 +36,15 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 echo   ✅ C++ runner built successfully
+
+echo   ⚙️ Building C runner...
+docker build -f runner/c-runner-v2.dockerfile -t c-runner:latest .
+if %errorlevel% neq 0 (
+    echo ❌ Failed to build C runner
+    pause
+    exit /b 1
+)
+echo   ✅ C runner built successfully
 
 echo   🐍 Building Python runner...
 docker build -f runner/python-runner-v2.dockerfile -t python-runner:latest .
@@ -64,11 +73,47 @@ if %errorlevel% neq 0 (
 )
 echo   ✅ Node.js runner built successfully
 
+echo   📘 Building TypeScript runner...
+docker build -f runner/typescript-runner-v2.dockerfile -t typescript-runner:latest .
+if %errorlevel% neq 0 (
+    echo ❌ Failed to build TypeScript runner
+    pause
+    exit /b 1
+)
+echo   ✅ TypeScript runner built successfully
+
+echo   🦀 Building Rust runner...
+docker build -f runner/rust-runner-v2.dockerfile -t rust-runner:latest .
+if %errorlevel% neq 0 (
+    echo ❌ Failed to build Rust runner
+    pause
+    exit /b 1
+)
+echo   ✅ Rust runner built successfully
+
+echo   🐘 Building PHP runner...
+docker build -f runner/php-runner-v2.dockerfile -t php-runner:latest .
+if %errorlevel% neq 0 (
+    echo ❌ Failed to build PHP runner
+    pause
+    exit /b 1
+)
+echo   ✅ PHP runner built successfully
+
+echo   💎 Building Ruby runner...
+docker build -f runner/ruby-runner-v2.dockerfile -t ruby-runner:latest .
+if %errorlevel% neq 0 (
+    echo ❌ Failed to build Ruby runner
+    pause
+    exit /b 1
+)
+echo   ✅ Ruby runner built successfully
+
 echo.
 echo 🎉 All Docker images built successfully!
 echo.
 echo 📋 Built images:
-docker images | findstr /R "cpp-runner python-runner go-runner node-runner"
+docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | findstr /R "runner"
 echo.
 echo 🚀 Next steps:
 echo 1. Install dependencies:
@@ -77,11 +122,11 @@ echo    Backend:  cd server ^&^& npm install
 echo.
 echo 2. Start the application:
 echo    Backend:  cd server ^&^& npm start
-echo    Frontend: npm run dev
+echo    Frontend: npm run dev  ^(in a new terminal^)
 echo.
 echo 3. Open your browser to: http://localhost:3000
 echo.
-echo 🧪 To test the Docker images manually, run:
-echo    docker run --rm --tmpfs /app:size=100m --workdir /app cpp-runner:latest sh -c "echo 'int main(){return 0;}' > code.cpp && g++ code.cpp -o code.out && echo 'Test passed'"
+echo 💡 To clean up Docker images: cleanup-docker.bat
+echo 💡 To test individual languages, use the web interface
 
 pause

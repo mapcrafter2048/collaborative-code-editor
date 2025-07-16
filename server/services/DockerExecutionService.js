@@ -21,6 +21,12 @@ class DockerExecutionService {
         command: 'g++ code.cpp -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 5s ./code.out < input.txt; else timeout 5s ./code.out; fi)',
         requiresCompilation: false // Using single command now
       },
+      'c': {
+        image: 'c-runner:latest',
+        extension: '.c',
+        command: 'gcc code.c -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 5s ./code.out < input.txt; else timeout 5s ./code.out; fi)',
+        requiresCompilation: false
+      },
       'python': {
         image: 'python-runner:latest',
         extension: '.py',
@@ -37,6 +43,30 @@ class DockerExecutionService {
         image: 'node-runner:latest',
         extension: '.js',
         command: 'timeout 10s node code.js < input.txt 2>&1 || timeout 10s node code.js 2>&1',
+        requiresCompilation: false
+      },
+      'typescript': {
+        image: 'typescript-runner:latest',
+        extension: '.ts',
+        command: 'timeout 10s ts-node code.ts < input.txt 2>&1 || timeout 10s ts-node code.ts 2>&1',
+        requiresCompilation: false
+      },
+      'rust': {
+        image: 'rust-runner:latest',
+        extension: '.rs',
+        command: 'rustc code.rs -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 10s ./code.out < input.txt; else timeout 10s ./code.out; fi)',
+        requiresCompilation: false
+      },
+      'php': {
+        image: 'php-runner:latest',
+        extension: '.php',
+        command: 'timeout 10s php code.php < input.txt 2>&1 || timeout 10s php code.php 2>&1',
+        requiresCompilation: false
+      },
+      'ruby': {
+        image: 'ruby-runner:latest',
+        extension: '.rb',
+        command: 'timeout 10s ruby code.rb < input.txt 2>&1 || timeout 10s ruby code.rb 2>&1',
         requiresCompilation: false
       }
     };
@@ -289,10 +319,15 @@ class DockerExecutionService {
    */
   getLanguageDisplayName(language) {
     const displayNames = {
+      'c': 'C',
       'cpp': 'C++',
       'python': 'Python',
       'go': 'Go',
-      'javascript': 'JavaScript'
+      'javascript': 'JavaScript',
+      'typescript': 'TypeScript',
+      'rust': 'Rust',
+      'php': 'PHP',
+      'ruby': 'Ruby'
     };
     return displayNames[language] || language;
   }
