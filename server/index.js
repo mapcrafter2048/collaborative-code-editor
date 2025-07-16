@@ -120,10 +120,34 @@ class CodeEditorServer {
    */
   shutdown() {
     console.log('🔄 Server shutting down gracefully...');
-    this.server.close(() => {
-      console.log('✅ Server closed');
-      process.exit(0);
+    
+    // Close Socket.IO connections first
+    this.io.close(() => {
+      console.log('📡 Socket.IO connections closed');
+      
+      // Close HTTP server
+      this.server.close(() => {
+        console.log('✅ HTTP server closed');
+        
+        // Clean up room manager
+        this.roomManager.shutdown();
+        console.log('🧹 Room manager cleaned up');
+        
+        // Force exit after a timeout to prevent hanging
+        setTimeout(() => {
+          console.log('⚠️ Force exit due to timeout');
+          process.exit(0);
+        }, 2000);
+        
+        process.exit(0);
+      });
     });
+    
+    // Force shutdown after 5 seconds if graceful shutdown fails
+    setTimeout(() => {
+      console.log('⚠️ Force shutdown due to timeout');
+      process.exit(1);
+    }, 5000);
   }
 }
 

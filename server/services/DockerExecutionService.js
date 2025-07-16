@@ -18,29 +18,25 @@ class DockerExecutionService {
       'cpp': {
         image: 'cpp-runner:latest',
         extension: '.cpp',
-        compileCommand: 'g++ -o /app/program /app/code.cpp',
-        runCommand: '/app/program',
-        requiresCompilation: true
+        command: 'g++ code.cpp -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 5s ./code.out < input.txt; else timeout 5s ./code.out; fi)',
+        requiresCompilation: false // Using single command now
       },
       'python': {
         image: 'python-runner:latest',
         extension: '.py',
-        compileCommand: null,
-        runCommand: 'python /app/code.py',
+        command: 'timeout 10s python code.py < input.txt 2>&1 || timeout 10s python code.py 2>&1',
         requiresCompilation: false
       },
       'go': {
         image: 'go-runner:latest',
         extension: '.go',
-        compileCommand: 'go build -o /app/program /app/code.go',
-        runCommand: '/app/program',
-        requiresCompilation: true
+        command: 'timeout 10s go run code.go < input.txt 2>&1 || timeout 10s go run code.go 2>&1',
+        requiresCompilation: false
       },
       'javascript': {
         image: 'node-runner:latest',
         extension: '.js',
-        compileCommand: null,
-        runCommand: 'node /app/code.js',
+        command: 'timeout 10s node code.js < input.txt 2>&1 || timeout 10s node code.js 2>&1',
         requiresCompilation: false
       }
     };
@@ -88,16 +84,20 @@ class DockerExecutionService {
       try {
         // Write code to temporary file
         await fs.writeFile(codeFile, code, 'utf8');
+        
+        // Create empty input.txt file for programs that expect input
+        const inputFile = path.join(tempDir, 'input.txt');
+        await fs.writeFile(inputFile, '', 'utf8');
 
         let result;
         
-        if (config.requiresCompilation) {
-          // Compile and run
-          result = await this.compileAndRun(config, tempDir, timeout);
-        } else {
-          // Run directly
-          result = await this.runCode(config, tempDir, timeout);
-        }
+        // All languages now use single command execution
+        result = await this.runDockerCommand(
+          config.image,
+          config.command,
+          tempDir,
+          timeout
+        );
 
         const executionTime = Date.now() - startTime;
         console.log(`✅ Code execution completed in ${executionTime}ms for room ${roomId}`);
@@ -182,16 +182,19 @@ class DockerExecutionService {
   async runDockerCommand(image, command, tempDir, timeout) {
     const dockerArgs = [
       'run',
-      '--rm',                    // Remove container after execution
-      '--memory', this.maxMemory, // Memory limit
-      '--cpus', this.maxCpus,     // CPU limit
-      '--network', 'none',        // No network access
-      '--user', 'nobody',         // Run as unprivileged user
-      '--read-only',              // Read-only filesystem
-      '--tmpfs', '/tmp:size=10m,noexec', // Temporary filesystem for temp files
-      '-v', `${tempDir}:/app:ro`, // Mount code directory to /app as read-only
+      '--rm',                          // Remove container after execution
+      '--memory', this.maxMemory,      // Memory limit
+      '--cpus', this.maxCpus,          // CPU limit
+      '--network', 'none',             // No network access
+      '--cap-drop', 'ALL',             // Drop all capabilities
+      '--security-opt', 'no-new-privileges',  // Prevent privilege escalation
+      '--read-only',                   // Make root filesystem read-only
+      '--tmpfs', '/tmp:size=50m,noexec,nosuid,nodev',  // Secure temp filesystem
+      '--tmpfs', '/app:size=100m,exec,nosuid,nodev',   // Writable app directory
+      '-v', `${tempDir}:/host:ro`,     // Mount host files as read-only
+      '--workdir', '/app',             // Set working directory
       image,
-      'sh', '-c', command
+      'sh', '-c', `cp /host/* /app/ 2>/dev/null || true && ${command}`
     ];
 
     return await this.runCommand('docker', dockerArgs, timeout);
@@ -288,7 +291,8 @@ class DockerExecutionService {
     const displayNames = {
       'cpp': 'C++',
       'python': 'Python',
-      'go': 'Go'
+      'go': 'Go',
+      'javascript': 'JavaScript'
     };
     return displayNames[language] || language;
   }
