@@ -41,7 +41,6 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   const [availableLanguages] = useState<Language[]>([
     { id: 'cpp', name: 'C++', extension: '.cpp', requiresCompilation: true },
     { id: 'python', name: 'Python', extension: '.py', requiresCompilation: false },
-    { id: 'go', name: 'Go', extension: '.go', requiresCompilation: true },
     { id: 'javascript', name: 'JavaScript', extension: '.js', requiresCompilation: false }
   ]);
 

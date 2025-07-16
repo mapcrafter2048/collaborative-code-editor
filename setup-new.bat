@@ -23,7 +23,7 @@ echo ✅ Docker is available and running
 
 REM Clean up old images
 echo 🧹 Cleaning up old Docker images...
-docker rmi cpp-runner:latest python-runner:latest node-runner:latest >nul 2>&1
+docker rmi cpp-runner:latest python-runner:latest go-runner:latest node-runner:latest >nul 2>&1
 
 REM Build Docker images
 echo 📦 Building Docker images...
@@ -46,7 +46,16 @@ if %errorlevel% neq 0 (
 )
 echo   ✅ Python runner built successfully
 
-echo    Building Node.js runner...
+echo   🐹 Building Go runner...
+docker build -f runner/go-runner-v2.dockerfile -t go-runner:latest .
+if %errorlevel% neq 0 (
+    echo ❌ Failed to build Go runner
+    pause
+    exit /b 1
+)
+echo   ✅ Go runner built successfully
+
+echo   📦 Building Node.js runner...
 docker build -f runner/node-runner-v2.dockerfile -t node-runner:latest .
 if %errorlevel% neq 0 (
     echo ❌ Failed to build Node.js runner
@@ -59,7 +68,7 @@ echo.
 echo 🎉 All Docker images built successfully!
 echo.
 echo 📋 Built images:
-docker images | findstr /R "cpp-runner python-runner node-runner"
+docker images | findstr /R "cpp-runner python-runner go-runner node-runner"
 echo.
 echo 🚀 Next steps:
 echo 1. Install dependencies:

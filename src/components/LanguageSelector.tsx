@@ -29,12 +29,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const icons: Record<string, string> = {
       'cpp': '🔧',
       'python': '🐍',
-      'go': '🚀',
-      'javascript': '📜',
-      'typescript': '📘',
-      'java': '☕',
-      'c': '⚙️',
-      'rust': '🦀'
+      'javascript': '📜'
     };
     return icons[languageId] || '📄';
   };

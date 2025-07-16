@@ -30,13 +30,6 @@ int main() {
 
 if __name__ == "__main__":
     main()`,
-      'go': `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, World!")
-}`,
       'javascript': `function main() {
     console.log("Hello, World!");
 }

@@ -18,14 +18,8 @@ class DockerExecutionService {
       'cpp': {
         image: 'cpp-runner:latest',
         extension: '.cpp',
-        command: 'g++ code.cpp -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 5s ./code.out < input.txt; else timeout 5s ./code.out; fi)',
-        requiresCompilation: false // Using single command now
-      },
-      'c': {
-        image: 'c-runner:latest',
-        extension: '.c',
-        command: 'gcc code.c -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 5s ./code.out < input.txt; else timeout 5s ./code.out; fi)',
-        requiresCompilation: false
+        command: 'g++ code.cpp -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 10s ./code.out < input.txt; else timeout 10s ./code.out; fi)',
+        requiresCompilation: true
       },
       'python': {
         image: 'python-runner:latest',
@@ -33,40 +27,10 @@ class DockerExecutionService {
         command: 'timeout 10s python code.py < input.txt 2>&1 || timeout 10s python code.py 2>&1',
         requiresCompilation: false
       },
-      'go': {
-        image: 'go-runner:latest',
-        extension: '.go',
-        command: 'timeout 10s go run code.go < input.txt 2>&1 || timeout 10s go run code.go 2>&1',
-        requiresCompilation: false
-      },
       'javascript': {
         image: 'node-runner:latest',
         extension: '.js',
         command: 'timeout 10s node code.js < input.txt 2>&1 || timeout 10s node code.js 2>&1',
-        requiresCompilation: false
-      },
-      'typescript': {
-        image: 'typescript-runner:latest',
-        extension: '.ts',
-        command: 'timeout 10s ts-node code.ts < input.txt 2>&1 || timeout 10s ts-node code.ts 2>&1',
-        requiresCompilation: false
-      },
-      'rust': {
-        image: 'rust-runner:latest',
-        extension: '.rs',
-        command: 'rustc code.rs -o code.out 2>&1 && (if [ -s input.txt ]; then timeout 10s ./code.out < input.txt; else timeout 10s ./code.out; fi)',
-        requiresCompilation: false
-      },
-      'php': {
-        image: 'php-runner:latest',
-        extension: '.php',
-        command: 'timeout 10s php code.php < input.txt 2>&1 || timeout 10s php code.php 2>&1',
-        requiresCompilation: false
-      },
-      'ruby': {
-        image: 'ruby-runner:latest',
-        extension: '.rb',
-        command: 'timeout 10s ruby code.rb < input.txt 2>&1 || timeout 10s ruby code.rb 2>&1',
         requiresCompilation: false
       }
     };
@@ -319,15 +283,9 @@ class DockerExecutionService {
    */
   getLanguageDisplayName(language) {
     const displayNames = {
-      'c': 'C',
       'cpp': 'C++',
       'python': 'Python',
-      'go': 'Go',
-      'javascript': 'JavaScript',
-      'typescript': 'TypeScript',
-      'rust': 'Rust',
-      'php': 'PHP',
-      'ruby': 'Ruby'
+      'javascript': 'JavaScript'
     };
     return displayNames[language] || language;
   }

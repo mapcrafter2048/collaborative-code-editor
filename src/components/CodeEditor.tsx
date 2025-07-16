@@ -28,7 +28,6 @@ type IStandaloneEditorConstructionOptions = import('monaco-editor').editor.IStan
 const LANGUAGE_MAPPING = {
   cpp: 'cpp',
   python: 'python', 
-  go: 'go',
   javascript: 'javascript'
 } as const;
 
@@ -45,13 +44,6 @@ int main() {
 
 if __name__ == "__main__":
     main()`,
-  go: `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, World!")
-}`,
   javascript: `function main() {
     console.log("Hello, World!");
 }
