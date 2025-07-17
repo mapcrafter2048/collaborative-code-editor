@@ -6,6 +6,7 @@ const cors = require('cors');
 const RoomManager = require('./models/RoomManager');
 const DockerExecutionService = require('./services/DockerExecutionService');
 const SocketHandler = require('./handlers/SocketHandler');
+const YjsWebSocketServer = require('./yjs-server');
 
 /**
  * Main server application for the collaborative code editor
@@ -29,6 +30,7 @@ class CodeEditorServer {
     this.roomManager = new RoomManager();
     this.dockerService = new DockerExecutionService();
     this.socketHandler = new SocketHandler(this.io, this.roomManager, this.dockerService);
+    this.yjsServer = new YjsWebSocketServer(3334);
 
     this.setupMiddleware();
     this.setupRoutes();
@@ -107,6 +109,9 @@ class CodeEditorServer {
    * Start the server
    */
   start(port = process.env.PORT || 3001) {
+    // Start Y.js WebSocket server
+    this.yjsServer.start();
+    
     this.server.listen(port, () => {
       console.log(`🚀 Collaborative Code Editor Server running on port ${port}`);
       console.log(`📡 WebSocket server ready for real-time collaboration`);
@@ -120,6 +125,9 @@ class CodeEditorServer {
    */
   shutdown() {
     console.log('🔄 Server shutting down gracefully...');
+    
+    // Stop Y.js server
+    this.yjsServer.stop();
     
     // Close Socket.IO connections first
     this.io.close(() => {

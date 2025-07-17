@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:8080
+    depends_on:
+      - backend
+
+  backend:
+    build: ./server
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - CLIENT_URL=http://localhost:3000
+      - PORT=8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - docker-in-docker
+
+  docker-in-docker:
+    image: docker:24-dind
+    privileged: true
+    volumes:
+      - docker-certs-ca:/certs/ca
+      - docker-certs-client:/certs/client
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+
+volumes:
+  docker-certs-ca:
+  docker-certs-client:
