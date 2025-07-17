@@ -40,3 +40,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Temporary execution files
+tmp/
+temp/
+*.tmp
+
+# Test files
+test-*.js
+debug-*
+
+# Docker volumes
+volumes/

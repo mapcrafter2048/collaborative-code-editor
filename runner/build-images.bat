@@ -41,10 +41,14 @@ REM Build Ruby runner
 echo 📦 Building Ruby runner...
 docker build -f runner/ruby-runner-v2.dockerfile -t ruby-runner:latest .
 
+REM Build Java runner
+echo 📦 Building Java runner...
+docker build -f runner/java-runner-v2.dockerfile -t java-runner:latest .
+
 echo ✅ All Docker images built successfully!
 echo.
 echo 🔍 Built images:
-docker images | findstr /R "c-runner cpp-runner python-runner go-runner node-runner typescript-runner rust-runner php-runner ruby-runner"
+docker images | findstr /R "c-runner cpp-runner python-runner go-runner node-runner typescript-runner rust-runner php-runner ruby-runner java-runner"
 
 echo.
 echo 🚀 You can now start the collaborative code editor server!

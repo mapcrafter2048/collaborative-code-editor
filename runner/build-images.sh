@@ -42,10 +42,14 @@ docker build -f runner/php-runner-v2.dockerfile -t php-runner:latest .
 echo "📦 Building Ruby runner..."
 docker build -f runner/ruby-runner-v2.dockerfile -t ruby-runner:latest .
 
+# Build Java runner
+echo "📦 Building Java runner..."
+docker build -f runner/java-runner-v2.dockerfile -t java-runner:latest .
+
 echo "✅ All Docker images built successfully!"
 echo ""
 echo "🔍 Built images:"
-docker images | grep -E "(c-runner|cpp-runner|python-runner|go-runner|node-runner|typescript-runner|rust-runner|php-runner|ruby-runner)"
+docker images | grep -E "(c-runner|cpp-runner|python-runner|go-runner|node-runner|typescript-runner|rust-runner|php-runner|ruby-runner|java-runner)"
 
 echo ""
 echo "🚀 You can now start the collaborative code editor server!"

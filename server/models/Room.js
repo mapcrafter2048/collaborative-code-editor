@@ -18,6 +18,12 @@ class Room {
    */
   getDefaultCode(language) {
     const defaultCodes = {
+      'c': `#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
+}`,
       'cpp': `#include <iostream>
 using namespace std;
 
@@ -34,7 +40,35 @@ if __name__ == "__main__":
     console.log("Hello, World!");
 }
 
-main();`
+main();`,
+      'typescript': `function main(): void {
+    console.log("Hello, World!");
+}
+
+main();`,
+      'go': `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+}`,
+      'rust': `fn main() {
+    println!("Hello, World!");
+}`,
+      'java': `public class code {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`,
+      'php': `<?php
+echo "Hello, World!\\n";
+?>`,
+      'ruby': `def main
+    puts "Hello, World!"
+end
+
+main`
     };
 
     return defaultCodes[language] || defaultCodes['javascript'];

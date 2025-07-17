@@ -12,7 +12,7 @@ A clean and extensible collaborative code editor web application that allows use
 
 ### 💻 Code Editing
 - **Monaco Editor**: Full-featured code editor with syntax highlighting
-- **Multi-language Support**: C++, Python, Go, and JavaScript
+- **Multi-language Support**: C, C++, Python, JavaScript, TypeScript, Go, Rust, Java, PHP, and Ruby
 - **IntelliSense**: Auto-completion, error detection, and code suggestions
 - **Customizable Themes**: Dark/light themes with customizable appearance
 

@@ -27,9 +27,16 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   // Get language display info
   const getLanguageIcon = (languageId: string): string => {
     const icons: Record<string, string> = {
+      'c': '🔧',
       'cpp': '🔧',
       'python': '🐍',
-      'javascript': '📜'
+      'javascript': '📜',
+      'typescript': '📘',
+      'go': '🐹',
+      'rust': '🦀',
+      'java': '☕',
+      'php': '🐘',
+      'ruby': '💎'
     };
     return icons[languageId] || '📄';
   };

@@ -40,19 +40,16 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   const [joinRoomId, setJoinRoomId] = useState(initialRoomId || "");
   const [username, setUsername] = useState(initialUsername);
   const [availableLanguages] = useState<Language[]>([
+    { id: "c", name: "C", extension: ".c", requiresCompilation: true },
     { id: "cpp", name: "C++", extension: ".cpp", requiresCompilation: true },
-    {
-      id: "python",
-      name: "Python",
-      extension: ".py",
-      requiresCompilation: false,
-    },
-    {
-      id: "javascript",
-      name: "JavaScript",
-      extension: ".js",
-      requiresCompilation: false,
-    },
+    { id: "python", name: "Python", extension: ".py", requiresCompilation: false },
+    { id: "javascript", name: "JavaScript", extension: ".js", requiresCompilation: false },
+    { id: "typescript", name: "TypeScript", extension: ".ts", requiresCompilation: false },
+    { id: "go", name: "Go", extension: ".go", requiresCompilation: true },
+    { id: "rust", name: "Rust", extension: ".rs", requiresCompilation: true },
+    { id: "java", name: "Java", extension: ".java", requiresCompilation: true },
+    { id: "php", name: "PHP", extension: ".php", requiresCompilation: false },
+    { id: "ruby", name: "Ruby", extension: ".rb", requiresCompilation: false },
   ]);
 
   // Auto-join room if provided in props

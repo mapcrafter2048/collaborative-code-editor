@@ -7,10 +7,11 @@ This directory contains the Dockerfiles and build scripts for the code execution
 - **C** - GCC compiler with C17 standard support
 - **C++** - GCC compiler with full C++17 support
 - **Python** - Python 3.11 with standard libraries
-- **Go** - Go 1.21 with module support
 - **JavaScript/Node.js** - Node.js 20 with npm packages
 - **TypeScript** - TypeScript with ts-node for direct execution
+- **Go** - Go 1.21 with module support
 - **Rust** - Rust 1.70 with Cargo support
+- **Java** - OpenJDK 21 with standard libraries
 - **PHP** - PHP 8.2 CLI with standard extensions
 - **Ruby** - Ruby 3.2 with standard gems
 
@@ -60,6 +61,9 @@ docker build -f runner/php-runner-v2.dockerfile -t php-runner:latest .
 
 # Ruby Runner
 docker build -f runner/ruby-runner-v2.dockerfile -t ruby-runner:latest .
+
+# Java Runner
+docker build -f runner/java-runner-v2.dockerfile -t java-runner:latest .
 ```
 
 ## 🔒 Security Features
@@ -86,6 +90,7 @@ runner/
 ├── rust-runner-v2.dockerfile     # Rust execution environment
 ├── php-runner-v2.dockerfile      # PHP execution environment
 ├── ruby-runner-v2.dockerfile     # Ruby execution environment
+├── java-runner-v2.dockerfile     # Java execution environment
 └── README.md                      # This file
 ```
 

@@ -26,12 +26,25 @@ type IModelDeltaDecoration = import('monaco-editor').editor.IModelDeltaDecoratio
 type IStandaloneEditorConstructionOptions = import('monaco-editor').editor.IStandaloneEditorConstructionOptions;
 
 const LANGUAGE_MAPPING = {
+  c: 'c',
   cpp: 'cpp',
   python: 'python', 
-  javascript: 'javascript'
+  javascript: 'javascript',
+  typescript: 'typescript',
+  go: 'go',
+  rust: 'rust',
+  java: 'java',
+  php: 'php',
+  ruby: 'ruby'
 } as const;
 
 const DEFAULT_CODE = {
+  c: `#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
+}`,
   cpp: `#include <iostream>
 using namespace std;
 
@@ -48,7 +61,35 @@ if __name__ == "__main__":
     console.log("Hello, World!");
 }
 
-main();`
+main();`,
+  typescript: `function main(): void {
+    console.log("Hello, World!");
+}
+
+main();`,
+  go: `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+}`,
+  rust: `fn main() {
+    println!("Hello, World!");
+}`,
+  java: `public class code {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`,
+  php: `<?php
+echo "Hello, World!\\n";
+?>`,
+  ruby: `def main
+    puts "Hello, World!"
+end
+
+main`
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
