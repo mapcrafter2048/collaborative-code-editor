@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import type { UserListProps } from '../types';
+import React from "react";
+import type { UserListProps } from "../types";
 
 /**
  * UserList component displaying active users in the room
@@ -16,14 +16,14 @@ const UserList: React.FC<UserListProps> = ({ users, currentUserId }) => {
   // Generate consistent colors for users
   const getUserColor = (userId: string): string => {
     const colors = [
-      'bg-red-500',
-      'bg-blue-500', 
-      'bg-green-500',
-      'bg-yellow-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-orange-500'
+      "bg-red-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-yellow-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-indigo-500",
+      "bg-orange-500",
     ];
     const index = userId.charCodeAt(0) % colors.length;
     return colors[index];
@@ -31,9 +31,9 @@ const UserList: React.FC<UserListProps> = ({ users, currentUserId }) => {
 
   const getInitials = (username: string): string => {
     return username
-      .split(' ')
-      .map(name => name.charAt(0))
-      .join('')
+      .split(" ")
+      .map((name) => name.charAt(0))
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -54,19 +54,18 @@ const UserList: React.FC<UserListProps> = ({ users, currentUserId }) => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 max-h-96 overflow-y-auto">
       <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
         Users ({users.length})
       </h3>
-      
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         {users.map((user) => (
           <div
             key={user.userId}
-            className={`flex items-center space-x-3 p-2 rounded-md transition-colors ${
+            className={`flex items-center gap-3 p-2 rounded-md transition-colors ${
               user.userId === currentUserId
-                ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700'
-                : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700"
+                : "hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             {/* Avatar */}
@@ -78,24 +77,22 @@ const UserList: React.FC<UserListProps> = ({ users, currentUserId }) => {
               >
                 {getInitials(user.username)}
               </div>
-              
               {/* Online status indicator */}
               <div
                 className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
-                  user.isOnline ? 'bg-green-500' : 'bg-gray-400'
+                  user.isOnline ? "bg-green-500" : "bg-gray-400"
                 }`}
-                title={user.isOnline ? 'Online' : 'Offline'}
+                title={user.isOnline ? "Online" : "Offline"}
               />
             </div>
-
             {/* User info */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <span
                   className={`text-sm font-medium truncate ${
                     user.userId === currentUserId
-                      ? 'text-blue-700 dark:text-blue-300'
-                      : 'text-gray-700 dark:text-gray-300'
+                      ? "text-blue-700 dark:text-blue-300"
+                      : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   {user.username}
@@ -106,34 +103,31 @@ const UserList: React.FC<UserListProps> = ({ users, currentUserId }) => {
                   )}
                 </span>
               </div>
-              
-              <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                <span className={`inline-block w-2 h-2 rounded-full ${
-                  user.isOnline ? 'bg-green-500' : 'bg-gray-400'
-                }`} />
-                <span>{user.isOnline ? 'Online' : 'Offline'}</span>
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <span
+                  className={`inline-block w-2 h-2 rounded-full ${
+                    user.isOnline ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                />
+                <span>{user.isOnline ? "Online" : "Offline"}</span>
               </div>
             </div>
-
             {/* Actions (future expansion) */}
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center gap-1">
               {user.userId === currentUserId && (
-                <span className="text-xs text-blue-600 dark:text-blue-400">👑</span>
+                <span className="text-xs text-blue-600 dark:text-blue-400">
+                  👑
+                </span>
               )}
             </div>
           </div>
         ))}
       </div>
-
       {/* Quick stats */}
       <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>
-            {users.filter(u => u.isOnline).length} online
-          </span>
-          <span>
-            {users.length} total
-          </span>
+          <span>{users.filter((u) => u.isOnline).length} online</span>
+          <span>{users.length} total</span>
         </div>
       </div>
     </div>

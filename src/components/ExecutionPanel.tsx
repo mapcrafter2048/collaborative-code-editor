@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import type { ExecutionPanelProps } from '../types';
+import React, { useState } from "react";
+import { Button } from "./ui/button";
+import type { ExecutionPanelProps } from "../types";
 
 /**
  * ExecutionPanel component for code execution and results display
@@ -17,7 +17,7 @@ const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
   result,
   isExecuting,
   onExecute,
-  disabled = false
+  disabled = false,
 }) => {
   const [isOutputVisible, setIsOutputVisible] = useState(true);
 
@@ -33,22 +33,22 @@ const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
   };
 
   const getStatusColor = () => {
-    if (isExecuting) return 'text-blue-600';
-    if (!result) return 'text-gray-600';
-    return result.success ? 'text-green-600' : 'text-red-600';
+    if (isExecuting) return "text-blue-600";
+    if (!result) return "text-gray-600";
+    return result.success ? "text-green-600" : "text-red-600";
   };
 
   const getStatusIcon = () => {
-    if (isExecuting) return '⏳';
-    if (!result) return '⚪';
-    return result.success ? '✅' : '❌';
+    if (isExecuting) return "⏳";
+    if (!result) return "⚪";
+    return result.success ? "✅" : "❌";
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <Button
             onClick={onExecute}
             disabled={disabled || isExecuting}
@@ -66,35 +66,35 @@ const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
               </>
             )}
           </Button>
-
           {result && (
-            <div className={`flex items-center space-x-2 text-sm ${getStatusColor()}`}>
+            <div
+              className={`flex items-center gap-2 text-sm ${getStatusColor()}`}
+            >
               <span>{getStatusIcon()}</span>
               <span>
-                {result.success ? 'Success' : 'Error'} 
-                {result.executionTime > 0 && ` (${formatExecutionTime(result.executionTime)})`}
+                {result.success ? "Success" : "Error"}
+                {result.executionTime > 0 &&
+                  ` (${formatExecutionTime(result.executionTime)})`}
               </span>
             </div>
           )}
         </div>
-
         <Button
           onClick={toggleOutput}
           variant="ghost"
           size="sm"
           className="text-gray-600 dark:text-gray-400"
         >
-          {isOutputVisible ? '🔽' : '🔼'} 
-          {isOutputVisible ? 'Hide' : 'Show'} Output
+          {isOutputVisible ? "🔽" : "🔼"}
+          {isOutputVisible ? "Hide" : "Show"} Output
         </Button>
       </div>
-
       {/* Output Panel */}
       {isOutputVisible && (
-        <div className="p-4">
+        <div className="p-4 flex-1 overflow-auto min-h-[80px]">
           {isExecuting ? (
             <div className="flex items-center justify-center py-8">
-              <div className="flex flex-col items-center space-y-2">
+              <div className="flex flex-col items-center gap-2">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   Executing code...
@@ -116,7 +116,6 @@ const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
                   </pre>
                 </div>
               )}
-
               {/* Error */}
               {result.error && (
                 <div>
@@ -130,39 +129,16 @@ const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
                   </pre>
                 </div>
               )}
-
               {/* No output or error */}
-              {!result.output && !result.error && result.success && (
-                <div className="text-center py-4">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Code executed successfully with no output
-                  </span>
+              {!result.output && !result.error && (
+                <div className="text-gray-500 dark:text-gray-400 text-sm">
+                  No output.
                 </div>
               )}
-
-              {/* Execution details */}
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-4">
-                  <span>Language: {result.language}</span>
-                  {result.executionTime > 0 && (
-                    <span>Time: {formatExecutionTime(result.executionTime)}</span>
-                  )}
-                </div>
-                {result.timestamp && (
-                  <span>
-                    {new Date(result.timestamp).toLocaleTimeString()}
-                  </span>
-                )}
-              </div>
             </div>
           ) : (
-            <div className="text-center py-8">
-              <div className="text-gray-400 dark:text-gray-600 mb-2">
-                <span className="text-2xl">🚀</span>
-              </div>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Click "Run Code" to execute your code
-              </span>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">
+              No output yet.
             </div>
           )}
         </div>

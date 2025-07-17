@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useSocket } from '../hooks/useSocket';
-import { useRoom } from '../hooks/useRoom';
-import { useCodeEditor } from '../hooks/useCodeEditor';
-import SimpleCodeEditor from './SimpleCodeEditor';
-import RoomHeader from './RoomHeader';
-import ExecutionPanel from './ExecutionPanel';
-import UserList from './UserList';
-import { Button } from './ui/button';
-import type { Language, CursorPosition, Selection } from '../types';
+import React, { useEffect, useState } from "react";
+import { useSocket } from "../hooks/useSocket";
+import { useRoom } from "../hooks/useRoom";
+import { useCodeEditor } from "../hooks/useCodeEditor";
+import SimpleCodeEditor from "./SimpleCodeEditor";
+import RoomHeader from "./RoomHeader";
+import ExecutionPanel from "./ExecutionPanel";
+import UserList from "./UserList";
+import { Button } from "./ui/button";
+import type { Language, CursorPosition, Selection } from "../types";
 
 /**
  * CollaborativeEditor - Main component that orchestrates real-time collaboration
@@ -28,20 +28,31 @@ interface CollaborativeEditorProps {
 
 const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   initialRoomId,
-  initialUsername = 'Anonymous'
+  initialUsername = "Anonymous",
 }) => {
   // Hooks for managing state
   const { connectionState, isConnecting, connect } = useSocket();
   const { roomState, joinRoom, leaveRoom, isInRoom, currentRoomId } = useRoom();
-  const { editorState, updateCode, updateCursor, changeLanguage, executeCode } = useCodeEditor(currentRoomId);
+  const { editorState, updateCode, updateCursor, changeLanguage, executeCode } =
+    useCodeEditor(currentRoomId);
 
   // Local state
-  const [joinRoomId, setJoinRoomId] = useState(initialRoomId || '');
+  const [joinRoomId, setJoinRoomId] = useState(initialRoomId || "");
   const [username, setUsername] = useState(initialUsername);
   const [availableLanguages] = useState<Language[]>([
-    { id: 'cpp', name: 'C++', extension: '.cpp', requiresCompilation: true },
-    { id: 'python', name: 'Python', extension: '.py', requiresCompilation: false },
-    { id: 'javascript', name: 'JavaScript', extension: '.js', requiresCompilation: false }
+    { id: "cpp", name: "C++", extension: ".cpp", requiresCompilation: true },
+    {
+      id: "python",
+      name: "Python",
+      extension: ".py",
+      requiresCompilation: false,
+    },
+    {
+      id: "javascript",
+      name: "JavaScript",
+      extension: ".js",
+      requiresCompilation: false,
+    },
   ]);
 
   // Auto-join room if provided in props
@@ -54,26 +65,26 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   // Event handlers
   const handleJoinRoom = async () => {
     if (!joinRoomId.trim()) {
-      alert('Please enter a room ID');
+      alert("Please enter a room ID");
       return;
     }
 
     if (!connectionState.connected) {
-      alert('Not connected to server. Please wait...');
+      alert("Not connected to server. Please wait...");
       return;
     }
 
     try {
       await joinRoom(joinRoomId.trim().toUpperCase(), username.trim());
     } catch (error) {
-      console.error('Failed to join room:', error);
-      alert('Failed to join room. Please try again.');
+      console.error("Failed to join room:", error);
+      alert("Failed to join room. Please try again.");
     }
   };
 
   const handleLeaveRoom = () => {
     leaveRoom();
-    setJoinRoomId('');
+    setJoinRoomId("");
   };
 
   const handleCodeChange = (newCode: string) => {
@@ -92,7 +103,13 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   };
 
   const handleLanguageChange = (newLanguage: string) => {
-    if (window.confirm(`Switch to ${availableLanguages.find(l => l.id === newLanguage)?.name}? This will reset the code.`)) {
+    if (
+      window.confirm(
+        `Switch to ${
+          availableLanguages.find((l) => l.id === newLanguage)?.name
+        }? This will reset the code.`
+      )
+    ) {
       changeLanguage(newLanguage);
     }
   };
@@ -102,8 +119,8 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   };
 
   const generateRoomId = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -113,11 +130,21 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   // Connection status component
   const ConnectionStatus = () => (
     <div className="flex items-center space-x-2 text-sm">
-      <div className={`w-2 h-2 rounded-full ${
-        connectionState.connected ? 'bg-green-500' : 'bg-red-500'
-      } ${connectionState.connected ? 'animate-pulse' : ''}`} />
-      <span className={connectionState.connected ? 'text-green-600' : 'text-red-600'}>
-        {connectionState.connected ? 'Connected' : isConnecting ? 'Connecting...' : 'Disconnected'}
+      <div
+        className={`w-2 h-2 rounded-full ${
+          connectionState.connected ? "bg-green-500" : "bg-red-500"
+        } ${connectionState.connected ? "animate-pulse" : ""}`}
+      />
+      <span
+        className={
+          connectionState.connected ? "text-green-600" : "text-red-600"
+        }
+      >
+        {connectionState.connected
+          ? "Connected"
+          : isConnecting
+          ? "Connecting..."
+          : "Disconnected"}
       </span>
       {connectionState.error && (
         <span className="text-red-500 text-xs">({connectionState.error})</span>
@@ -140,7 +167,10 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Your Name
             </label>
             <input
@@ -155,7 +185,10 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
           </div>
 
           <div>
-            <label htmlFor="roomId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="roomId"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Room ID
             </label>
             <div className="flex space-x-2">
@@ -181,10 +214,14 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
 
           <Button
             onClick={handleJoinRoom}
-            disabled={!connectionState.connected || !joinRoomId.trim() || roomState.isJoining}
+            disabled={
+              !connectionState.connected ||
+              !joinRoomId.trim() ||
+              roomState.isJoining
+            }
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md disabled:opacity-50"
           >
-            {roomState.isJoining ? 'Joining...' : 'Join Room'}
+            {roomState.isJoining ? "Joining..." : "Join Room"}
           </Button>
 
           {roomState.error && (
@@ -219,7 +256,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <RoomHeader
         roomId={roomState.room.id}
@@ -230,19 +267,17 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
       />
 
       {/* Main content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Editor */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        {/* Editor and Execution Panel */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 min-h-[200px] bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 overflow-auto">
             <SimpleCodeEditor
               value={editorState.code || roomState.room.code}
               language={roomState.room.language}
               onChange={handleCodeChange}
             />
           </div>
-
-          {/* Execution Panel */}
-          <div className="h-1/3 border-t border-gray-200 dark:border-gray-700">
+          <div className="w-full border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 max-h-[40vh] min-h-[120px] overflow-auto">
             <ExecutionPanel
               result={editorState.lastExecution}
               isExecuting={editorState.isExecuting}
@@ -251,30 +286,26 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
             />
           </div>
         </div>
-
         {/* Sidebar */}
-        <div className="w-80 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <ConnectionStatus />
-              <Button
-                onClick={handleLeaveRoom}
-                variant="outline"
-                size="sm"
-                className="text-red-600 border-red-300 hover:bg-red-50"
-              >
-                Leave Room
-              </Button>
-            </div>
+        <aside className="w-full md:w-80 bg-gray-50 dark:bg-gray-900 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 flex flex-col max-h-[60vh] md:max-h-none md:h-auto overflow-y-auto">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <ConnectionStatus />
+            <Button
+              onClick={handleLeaveRoom}
+              variant="outline"
+              size="sm"
+              className="text-red-600 border-red-300 hover:bg-red-50"
+            >
+              Leave Room
+            </Button>
           </div>
-
           <div className="flex-1 p-4 overflow-y-auto">
             <UserList
               users={roomState.users}
-              currentUserId={roomState.currentUser?.userId || ''}
+              currentUserId={roomState.currentUser?.userId || ""}
             />
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   );

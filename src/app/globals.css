@@ -123,21 +123,24 @@
 
 /* Custom styles for Collaborative Code Editor */
 
-html, body, #__next {
+html,
+body,
+#__next {
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
 }
 
 /* Monaco Editor styling overrides */
 .monaco-editor {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Menlo', 'Courier New', monospace !important;
+  font-family: "JetBrains Mono", "Fira Code", "Monaco", "Menlo", "Courier New",
+    monospace !important;
 }
 
 /* Custom scrollbar for better UI */
@@ -164,7 +167,7 @@ body {
   ::-webkit-scrollbar-thumb {
     background: #4a5568;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background: #2d3748;
   }
@@ -176,7 +179,7 @@ body {
 }
 
 .user-cursor::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -1px;
   top: 0;
@@ -225,7 +228,7 @@ body {
   .mobile-hide {
     display: none;
   }
-  
+
   .mobile-stack {
     flex-direction: column;
   }
@@ -241,7 +244,7 @@ select:focus-visible {
 
 /* Code execution result styling */
 .execution-output {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
   white-space: pre-wrap;
   word-break: break-word;
 }
