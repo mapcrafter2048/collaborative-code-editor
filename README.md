@@ -9,6 +9,7 @@ A clean and extensible collaborative code editor web application that allows use
 - **Live Code Sync**: Real-time code editing with conflict-free collaboration
 - **User Presence**: See who's online with colored avatars and status indicators
 - **Cursor Tracking**: View other users' cursor positions and selections in real-time
+- **Y.js Integration**: Alternative collaborative approach using CRDTs for better performance
 
 ### 💻 Code Editing
 - **Monaco Editor**: Full-featured code editor with syntax highlighting
@@ -27,6 +28,26 @@ A clean and extensible collaborative code editor web application that allows use
 - **Responsive Design**: Works seamlessly on desktop and mobile
 - **Real-time Feedback**: Instant visual feedback for all actions
 - **Intuitive Interface**: Clean, distraction-free coding environment
+
+## 🆚 Collaboration Approaches
+
+This project offers two collaborative editing approaches:
+
+### 1. Socket.IO Approach (Default)
+- Custom real-time synchronization
+- Manual conflict resolution
+- WebSocket-based communication
+- Good for simple use cases
+
+### 2. Y.js Approach (Alternative)
+- CRDT-based automatic conflict resolution
+- Higher performance and scalability
+- Built-in offline support
+- Advanced user awareness features
+
+📖 **See [YJS_INTEGRATION.md](YJS_INTEGRATION.md) for detailed Y.js documentation**
+
+🧪 **Test Y.js integration at `/yjs-test`**
 
 ## 🏗️ Architecture
 
