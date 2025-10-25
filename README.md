@@ -5,24 +5,28 @@ A clean and extensible collaborative code editor web application that allows use
 ## ✨ Features
 
 ### 🔄 Real-time Collaboration
+
 - **Shared Rooms**: Create or join coding rooms with unique IDs
 - **Live Code Sync**: Real-time code editing with conflict-free collaboration
 - **User Presence**: See who's online with colored avatars and status indicators
 - **Cursor Tracking**: View other users' cursor positions and selections in real-time
 
 ### 💻 Code Editing
+
 - **Monaco Editor**: Full-featured code editor with syntax highlighting
-- **Multi-language Support**: C, C++, Python, JavaScript, TypeScript, Go, Rust, Java, PHP, and Ruby
+- **Multi-language Support**: Python, JavaScript, and TypeScript
 - **IntelliSense**: Auto-completion, error detection, and code suggestions
 - **Customizable Themes**: Dark/light themes with customizable appearance
 
 ### 🐳 Secure Code Execution
+
 - **Docker Isolation**: Code runs in isolated Docker containers
 - **Resource Constraints**: Memory and CPU limits for safety
 - **Timeout Protection**: Automatic termination of long-running processes
 - **Multi-language Support**: Compilation and execution for different languages
 
 ### 🎨 Modern UI/UX
+
 - **ShadCN Components**: Beautiful, accessible UI components
 - **Responsive Design**: Works seamlessly on desktop and mobile
 - **Real-time Feedback**: Instant visual feedback for all actions
@@ -53,6 +57,7 @@ A clean and extensible collaborative code editor web application that allows use
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **Next.js 15** - React framework with App Router
 - **React 19** - Modern React with hooks and concurrent features
 - **Monaco Editor** - VS Code's editor for the web
@@ -62,58 +67,85 @@ A clean and extensible collaborative code editor web application that allows use
 - **TypeScript** - Type-safe development
 
 ### Backend
+
 - **Node.js** - JavaScript runtime
 - **Express** - Web application framework
 - **Socket.IO** - Real-time bidirectional communication
 - **UUID** - Unique identifier generation
 
 ### Infrastructure
+
 - **Docker** - Containerized code execution
-- **Local Images**: `gcc:latest`, `python:3.11-slim`, `golang:1.21-alpine`
+- **Custom Images**: `python-runner`, `node-runner`, `typescript-runner`
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
 - **Docker** (with the required images)
 
-### Docker Images Setup
-Pull the required Docker images:
+### Quick Setup
+
+The easiest way to get started is to use our setup script:
+
 ```bash
-docker pull gcc:latest
-docker pull python:3.11-slim
-docker pull golang:1.21-alpine
+chmod +x setup.sh
+./setup.sh
 ```
 
-### Installation
+This will:
+
+1. Check for Node.js and Docker installation
+2. Install all dependencies
+3. Build Docker images for Python, JavaScript, and TypeScript
+4. Verify the setup
+
+### Manual Installation
+
+If you prefer to install manually:
 
 1. **Clone the repository**
+
    ```bash
-   git clone <repository-url>
-   cd code-editor
+   git clone https://github.com/mapcrafter2048/collaborative-code-editor.git
+   cd collaborative-code-editor
    ```
 
 2. **Install frontend dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Install server dependencies**
+
    ```bash
    cd server
    npm install
    cd ..
    ```
 
-4. **Start the backend server**
+4. **Build Docker images**
+
+   ```bash
+   cd runner
+   chmod +x build-images.sh
+   ./build-images.sh
+   cd ..
+   ```
+
+5. **Start the backend server**
+
    ```bash
    cd server
    npm run dev
    ```
+
    The server will start on `http://localhost:3001`
 
-5. **Start the frontend development server**
+6. **Start the frontend development server**
    ```bash
    npm run dev
    ```
@@ -152,6 +184,7 @@ docker pull golang:1.21-alpine
 ### Environment Variables
 
 Create `.env.local` in the project root:
+
 ```env
 # Server URL (optional, defaults to localhost:3001)
 NEXT_PUBLIC_SERVER_URL=http://localhost:3001
@@ -164,38 +197,66 @@ CLIENT_URL=http://localhost:3000
 ### Docker Execution Limits
 
 The default execution limits can be modified in `server/services/DockerExecutionService.js`:
+
 ```javascript
 this.defaultTimeout = 10000; // 10 seconds
-this.maxMemory = '128m';      // 128 MB
-this.maxCpus = '0.5';         // 0.5 CPU cores
+this.maxMemory = "128m"; // 128 MB
+this.maxCpus = "0.5"; // 0.5 CPU cores
 ```
 
 ## 📁 Project Structure
 
 ```
-code-editor/
+collaborative-code-editor/
 ├── src/
-│   ├── app/                 # Next.js App Router
-│   ├── components/          # React components
-│   │   ├── ui/             # ShadCN UI components
-│   │   ├── CodeEditor.tsx  # Monaco Editor wrapper
-│   │   ├── CollaborativeEditor.tsx  # Main editor
-│   │   └── ...
-│   ├── hooks/              # Custom React hooks
-│   ├── services/           # API and Socket services
-│   ├── types/              # TypeScript definitions
-│   └── lib/                # Utility functions
+│   ├── app/                        # Next.js App Router
+│   │   ├── page.tsx               # Main page
+│   │   ├── layout.js              # Root layout
+│   │   └── globals.css            # Global styles
+│   ├── components/                # React components
+│   │   ├── ui/                    # ShadCN UI components
+│   │   ├── CollaborativeEditor.tsx # Main editor
+│   │   ├── SimpleCodeEditor.tsx   # Monaco Editor wrapper
+│   │   ├── ExecutionPanel.tsx     # Code execution panel
+│   │   ├── LanguageSelector.tsx   # Language dropdown
+│   │   ├── RoomHeader.tsx         # Room info header
+│   │   └── UserList.tsx           # Online users list
+│   ├── hooks/                     # Custom React hooks
+│   │   ├── useSocket.ts           # WebSocket connection
+│   │   ├── useRoom.ts             # Room management
+│   │   └── useCodeEditor.ts       # Editor state
+│   ├── services/                  # API and Socket services
+│   │   ├── socketService.ts       # Socket.IO client
+│   │   └── apiService.ts          # REST API client
+│   ├── types/                     # TypeScript definitions
+│   │   └── index.ts               # All type definitions
+│   └── lib/                       # Utility functions
+│       └── utils.ts               # Helper utilities
 ├── server/
-│   ├── index.js            # Main server file
-│   ├── models/             # Data models
-│   ├── services/           # Business logic
-│   └── handlers/           # WebSocket handlers
-└── public/                 # Static assets
+│   ├── index.js                   # Main server file
+│   ├── models/                    # Data models
+│   │   ├── Room.js                # Room model
+│   │   └── RoomManager.js         # Room management
+│   ├── services/                  # Business logic
+│   │   └── DockerExecutionService.js # Code execution
+│   └── handlers/                  # WebSocket handlers
+│       └── SocketHandler.js       # Socket event handlers
+├── runner/                        # Docker configurations
+│   ├── python-runner-v2.dockerfile
+│   ├── node-runner-v2.dockerfile
+│   ├── typescript-runner-v2.dockerfile
+│   ├── build-images.sh            # Build script
+│   └── README.md                  # Runner documentation
+├── public/                        # Static assets
+├── setup.sh                       # Automated setup script
+├── package.json                   # Frontend dependencies
+└── README.md                      # This file
 ```
 
 ## 🔒 Security Features
 
 ### Code Execution Security
+
 - **Container Isolation**: Each execution runs in a separate Docker container
 - **Resource Limits**: Memory, CPU, and time constraints
 - **Network Isolation**: No network access during execution
@@ -203,6 +264,7 @@ code-editor/
 - **Unprivileged User**: Code runs as `nobody` user
 
 ### WebSocket Security
+
 - **CORS Protection**: Configured for specific origins
 - **Connection Limits**: Automatic cleanup of inactive connections
 - **Input Validation**: All user inputs are validated and sanitized
@@ -212,6 +274,7 @@ code-editor/
 ### Common Issues
 
 **Docker not found**
+
 ```bash
 # Ensure Docker is installed and running
 docker --version
@@ -219,16 +282,19 @@ docker ps
 ```
 
 **WebSocket connection failed**
+
 - Check if the server is running on port 3001
 - Verify firewall settings
 - Ensure CORS is properly configured
 
 **Monaco Editor not loading**
+
 - Check browser console for errors
 - Verify all dependencies are installed
 - Clear browser cache and reload
 
 **Code execution timeout**
+
 - Check Docker container status
 - Verify Docker images are available
 - Increase timeout limits if needed

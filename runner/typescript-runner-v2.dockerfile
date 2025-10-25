@@ -7,7 +7,7 @@ FROM node:20-alpine
 # Install essential tools and TypeScript globally
 RUN apk add --no-cache \
     coreutils \
-    && npm install -g typescript ts-node @types/node
+    && npm install -g typescript ts-node tsx @types/node
 
 # Create a non-root user for security
 RUN adduser -D -s /bin/sh coderunner

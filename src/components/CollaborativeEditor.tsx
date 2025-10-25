@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSocket } from "../hooks/useSocket";
 import { useRoom } from "../hooks/useRoom";
 import { useCodeEditor } from "../hooks/useCodeEditor";
@@ -37,30 +37,16 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
     useCodeEditor(currentRoomId);
 
   // Local state
-  const [joinRoomId, setJoinRoomId] = useState(initialRoomId || "");
+  const [joinRoomId, setJoinRoomId] = useState(initialRoomId ?? "");
   const [username, setUsername] = useState(initialUsername);
   const [availableLanguages] = useState<Language[]>([
-    { id: "c", name: "C", extension: ".c", requiresCompilation: true },
-    { id: "cpp", name: "C++", extension: ".cpp", requiresCompilation: true },
-    { id: "python", name: "Python", extension: ".py", requiresCompilation: false },
-    { id: "javascript", name: "JavaScript", extension: ".js", requiresCompilation: false },
-    { id: "typescript", name: "TypeScript", extension: ".ts", requiresCompilation: false },
-    { id: "go", name: "Go", extension: ".go", requiresCompilation: true },
-    { id: "rust", name: "Rust", extension: ".rs", requiresCompilation: true },
-    { id: "java", name: "Java", extension: ".java", requiresCompilation: true },
-    { id: "php", name: "PHP", extension: ".php", requiresCompilation: false },
-    { id: "ruby", name: "Ruby", extension: ".rb", requiresCompilation: false },
+    { id: "python", name: "Python", extension: ".py", requiresCompilation: false, monacoLanguage: "python" },
+    { id: "javascript", name: "JavaScript", extension: ".js", requiresCompilation: false, monacoLanguage: "javascript" },
+    { id: "typescript", name: "TypeScript", extension: ".ts", requiresCompilation: false, monacoLanguage: "typescript" },
   ]);
 
-  // Auto-join room if provided in props
-  useEffect(() => {
-    if (initialRoomId && connectionState.connected && !isInRoom) {
-      handleJoinRoom();
-    }
-  }, [initialRoomId, connectionState.connected, isInRoom]);
-
   // Event handlers
-  const handleJoinRoom = async () => {
+  const handleJoinRoom = useCallback(async () => {
     if (!joinRoomId.trim()) {
       alert("Please enter a room ID");
       return;
@@ -77,7 +63,14 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
       console.error("Failed to join room:", error);
       alert("Failed to join room. Please try again.");
     }
-  };
+  }, [joinRoomId, connectionState.connected, joinRoom, username]);
+
+  // Auto-join room if provided in props
+  useEffect(() => {
+    if (initialRoomId && connectionState.connected && !isInRoom) {
+      void handleJoinRoom();
+    }
+  }, [initialRoomId, connectionState.connected, isInRoom, handleJoinRoom]);
 
   const handleLeaveRoom = () => {
     leaveRoom();
@@ -86,17 +79,6 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
 
   const handleCodeChange = (newCode: string) => {
     updateCode(newCode);
-  };
-
-  const handleCursorChange = (position: CursorPosition) => {
-    updateCursor(position);
-  };
-
-  const handleSelectionChange = (selection: Selection) => {
-    updateCursor(
-      { lineNumber: selection.startLineNumber, column: selection.startColumn },
-      selection
-    );
   };
 
   const handleLanguageChange = (newLanguage: string) => {
@@ -112,14 +94,17 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
   };
 
   const handleExecuteCode = () => {
-    executeCode();
+    void executeCode();
   };
 
   const generateRoomId = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
+    // Use crypto.getRandomValues for cryptographically secure random numbers
+    const randomValues = new Uint8Array(6);
+    crypto.getRandomValues(randomValues);
     for (let i = 0; i < 6; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
+      result += chars.charAt(randomValues[i] % chars.length);
     }
     setJoinRoomId(result);
   };
@@ -174,7 +159,9 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your name"
               maxLength={20}
@@ -193,7 +180,9 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
                 id="roomId"
                 type="text"
                 value={joinRoomId}
-                onChange={(e) => setJoinRoomId(e.target.value.toUpperCase())}
+                onChange={(e) => {
+                  setJoinRoomId(e.target.value.toUpperCase());
+                }}
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter room ID"
                 maxLength={6}
@@ -210,7 +199,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
           </div>
 
           <Button
-            onClick={handleJoinRoom}
+            onClick={() => void handleJoinRoom()}
             disabled={
               !connectionState.connected ||
               !joinRoomId.trim() ||
@@ -234,7 +223,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
           <ConnectionStatus />
           {!connectionState.connected && !isConnecting && (
             <Button
-              onClick={connect}
+              onClick={() => void connect()}
               variant="outline"
               size="sm"
               className="mt-2"
@@ -299,7 +288,7 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
           <div className="flex-1 p-4 overflow-y-auto">
             <UserList
               users={roomState.users}
-              currentUserId={roomState.currentUser?.userId || ""}
+              currentUserId={roomState.currentUser?.userId ?? ""}
             />
           </div>
         </aside>

@@ -3,7 +3,7 @@
  * Manages users, code state, and room metadata
  */
 class Room {
-  constructor(id, language = 'javascript') {
+  constructor(id, language = "javascript") {
     this.id = id;
     this.language = language;
     this.code = this.getDefaultCode(language);
@@ -18,66 +18,30 @@ class Room {
    */
   getDefaultCode(language) {
     const defaultCodes = {
-      'c': `#include <stdio.h>
-
-int main() {
-    printf("Hello, World!\\n");
-    return 0;
-}`,
-      'cpp': `#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "Hello, World!" << endl;
-    return 0;
-}`,
-      'python': `def main():
+      python: `def main():
     print("Hello, World!")
 
 if __name__ == "__main__":
     main()`,
-      'javascript': `function main() {
+      javascript: `function main() {
     console.log("Hello, World!");
 }
 
 main();`,
-      'typescript': `function main(): void {
+      typescript: `function main(): void {
     console.log("Hello, World!");
 }
 
 main();`,
-      'go': `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, World!")
-}`,
-      'rust': `fn main() {
-    println!("Hello, World!");
-}`,
-      'java': `public class code {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}`,
-      'php': `<?php
-echo "Hello, World!\\n";
-?>`,
-      'ruby': `def main
-    puts "Hello, World!"
-end
-
-main`
     };
 
-    return defaultCodes[language] || defaultCodes['javascript'];
+    return defaultCodes[language] ?? defaultCodes["javascript"];
   }
 
   /**
    * Add a user to the room
    */
-  addUser(userId, socketId) {
+  addUser(userId) {
     this.users.add(userId);
     this.updateActivity();
     console.log(`👤 User ${userId} joined room ${this.id}`);
@@ -91,7 +55,7 @@ main`
     this.cursors.delete(userId);
     this.updateActivity();
     console.log(`👤 User ${userId} left room ${this.id}`);
-    
+
     // Return true if room should be cleaned up (no users left)
     return this.users.size === 0;
   }
@@ -120,7 +84,9 @@ main`
     this.language = newLanguage;
     this.code = this.getDefaultCode(newLanguage);
     this.updateActivity();
-    console.log(`🔄 Language changed to ${newLanguage} in room ${this.id} by user ${userId}`);
+    console.log(
+      `🔄 Language changed to ${newLanguage} in room ${this.id} by user ${userId}`
+    );
   }
 
   /**
@@ -135,7 +101,7 @@ main`
       users: Array.from(this.users),
       cursors: Object.fromEntries(this.cursors),
       lastActivity: this.lastActivity,
-      createdAt: this.createdAt
+      createdAt: this.createdAt,
     };
   }
 
@@ -159,7 +125,7 @@ main`
   isStale(maxInactiveMinutes = 60) {
     const now = new Date();
     const inactiveTime = now - this.lastActivity;
-    return inactiveTime > (maxInactiveMinutes * 60 * 1000);
+    return inactiveTime > maxInactiveMinutes * 60 * 1000;
   }
 }
 

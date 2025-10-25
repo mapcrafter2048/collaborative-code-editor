@@ -73,7 +73,9 @@ export function useCodeEditor(roomId: string | null) {
 
     try {
       setEditorState(prev => ({ ...prev, isExecuting: true }));
-      socketService.executeCode(roomId, timeout);
+      const languageAwareTimeout =
+        timeout ?? (editorState.language === 'typescript' ? 300_000 : undefined);
+      socketService.executeCode(roomId, languageAwareTimeout);
     } catch (error) {
       console.error('Failed to execute code:', error);
       setEditorState(prev => ({ 
