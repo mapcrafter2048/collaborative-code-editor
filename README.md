@@ -21,9 +21,9 @@ A clean and extensible collaborative code editor web application that allows use
 ### 🐳 Secure Code Execution
 
 - **Docker Isolation**: Code runs in isolated Docker containers
-- **Resource Constraints**: Memory and CPU limits for safety
-- **Timeout Protection**: Automatic termination of long-running processes
-- **Multi-language Support**: Compilation and execution for different languages
+- **Resource Constraints**: Memory (256MB) and CPU (1.0 core) limits for safety
+- **Timeout Protection**: 10s default, 300s (5 min) for TypeScript
+- **Multi-language Support**: Python, JavaScript, TypeScript with modern runtimes
 
 ### 🎨 Modern UI/UX
 
@@ -76,7 +76,10 @@ A clean and extensible collaborative code editor web application that allows use
 ### Infrastructure
 
 - **Docker** - Containerized code execution
-- **Custom Images**: `python-runner`, `node-runner`, `typescript-runner`
+- **Custom Images**:
+  - `python-runner:latest` (Python 3.11)
+  - `node-runner:latest` (Node.js 20)
+  - `typescript-runner:latest` (Node.js 20 + tsx runtime)
 
 ## 🚀 Getting Started
 
@@ -199,10 +202,13 @@ CLIENT_URL=http://localhost:3000
 The default execution limits can be modified in `server/services/DockerExecutionService.js`:
 
 ```javascript
-this.defaultTimeout = 10000; // 10 seconds
-this.maxMemory = "128m"; // 128 MB
-this.maxCpus = "0.5"; // 0.5 CPU cores
+this.defaultTimeout = 10000; // 10 seconds (Python, JavaScript)
+// TypeScript uses 300000ms (5 minutes) via language-specific config
+this.maxMemory = "256m"; // 256 MB
+this.maxCpus = "1.0"; // 1.0 CPU core
 ```
+
+**Note**: TypeScript executions automatically receive a 5-minute timeout due to compilation overhead with the `tsx` runtime.
 
 ## 📁 Project Structure
 
@@ -244,7 +250,7 @@ collaborative-code-editor/
 ├── runner/                        # Docker configurations
 │   ├── python-runner-v2.dockerfile
 │   ├── node-runner-v2.dockerfile
-│   ├── typescript-runner-v2.dockerfile
+│   ├── typescript-runner-v2.dockerfile  # Uses tsx runtime
 │   ├── build-images.sh            # Build script
 │   └── README.md                  # Runner documentation
 ├── public/                        # Static assets
